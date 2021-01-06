@@ -12,7 +12,7 @@ from keras.optimizers import Adam
 from keras.utils import to_categorical
 
 import os
-import pickle
+import dill as pickle
 import random
 import time
 import json

@@ -6,7 +6,7 @@ from keras import backend as K
 
 import random
 import os
-import pickle
+import dill as pickle
 
 from .model import LstmType, UvfaType
 from .common import create_beta_list, create_gamma_list_agent57

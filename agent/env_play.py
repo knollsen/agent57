@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation
 
 import os
-import pickle
+import dill as pickle
 from tkinter import Tk
 from tkinter import messagebox
 import glob

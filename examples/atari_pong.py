@@ -140,7 +140,7 @@ def run_dqn(enable_train):
         ENV_NAME,
         kwargs,
         nb_steps=nb_steps,
-        nb_time=60*60*18,   # 18h
+        nb_time=60*60,   # 18h
         logger_type=LoggerType.TIME,
         log_interval=60*20,  # 20m
         test_env=env,
@@ -203,7 +203,7 @@ def run_agent57(enable_train):
         ENV_NAME,
         kwargs,
         nb_trains=1_750_000,
-        nb_time=60*60*18,  # 18h
+        nb_time=60*60,  # 18h
         logger_type=LoggerType.TIME,
         log_interval=60*20,  # 20m
         test_env=create_env,
@@ -232,6 +232,6 @@ if __name__ == '__main__':
 
     # 複数Actorレーニング
     if True:
-        run_agent57(enable_train=True)
+        run_agent57(enable_train=False)
         #run_agent57(enable_train=False)  # test only
 

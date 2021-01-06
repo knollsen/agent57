@@ -11,7 +11,7 @@ import numpy as np
 import multiprocessing as mp
 import math
 import os
-import pickle
+import dill as pickle
 import enum
 import time
 import traceback

@@ -17,7 +17,7 @@ from agent.callbacks import LoggerType
 
 from agent.main_runner import run_gym_dqn, run_play, run_replay, run_gym_agent57
 
-
+MINUTES_OF_TRAINING = 60
 seed_everything(42)
 ENV_NAME = "MountainCar-v0"
 episode_save_dir = "tmp_{}.".format(ENV_NAME)
@@ -134,7 +134,7 @@ def run_dqn(enable_train):
         ENV_NAME,
         kwargs,
         nb_steps=nb_steps,
-        nb_time=60*60,
+        nb_time=MINUTES_OF_TRAINING*60,
         logger_type=LoggerType.STEP,
         log_interval=1000,
         test_env=env,
@@ -190,7 +190,7 @@ def run_agent57(enable_train):
         ENV_NAME,
         kwargs,
         nb_trains=nb_trains,
-        nb_time=60*60,
+        nb_time=MINUTES_OF_TRAINING*60,
         logger_type=LoggerType.STEP,
         log_interval=1000,
         test_env=create_env,
@@ -215,12 +215,12 @@ if __name__ == '__main__':
         run_replay(episode_save_dir)
 
     # SingleActorレーニング
-    if True:
+    if False:
         run_dqn(enable_train=True)
         #run_dqn(enable_train=False)  # test only
 
     # 複数Actorレーニング
-    if False:
+    if True:
         run_agent57(enable_train=True)
         #run_agent57(enable_train=False)  # test only
 

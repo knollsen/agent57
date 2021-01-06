@@ -246,7 +246,7 @@ if __name__ == '__main__':
 
     # 複数Actorレーニング
     if True:
-        run_agent57(enable_train=True)
+        run_agent57(enable_train=False)
         #run_agent57(enable_train=False)  # test only
 
 
