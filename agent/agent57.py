@@ -11,7 +11,7 @@ import numpy as np
 import multiprocessing as mp
 import math
 import os
-import dill as pickle
+import pickle
 import enum
 import time
 import traceback
@@ -25,12 +25,11 @@ from .learner import Learner
 from .env_play import add_memory
 
 
-# 複数のプロセスでGPUを使用する設定
+# gpu settings
 # https://qiita.com/studio_haneya/items/4dfaf2fb2ac44818e7e0
 # https://github.com/tensorflow/tensorflow/issues/11812
 # https://www.tensorflow.org/guide/gpu
 
-# 最低でも1024MB以上、memory_limit * (actor数+2)がGPUメモリを超えない事
 #memory_limit = 1024
 memory_limit = 0
 for device in tf.config.experimental.list_physical_devices('GPU'):
@@ -63,22 +62,22 @@ class Agent57():
 
         # NN
         batch_size=32,
-        input_sequence=4,    # 入力フレーム数
-        dense_units_num=512, # Dense層のユニット数
-        enable_dueling_network=True,                  # dueling network有効フラグ
-        dueling_network_type=DuelingNetwork.AVERAGE,  # dueling networkで使うアルゴリズム
-        lstm_type=LstmType.NONE,  # LSTM有効フラグ
-        lstm_units_num=512,       # LSTMのユニット数
-        lstmful_input_length=80,  # ステートフルLSTMの入力数
+        input_sequence=4,    # number of input frames
+        dense_units_num=512, # Dense layer number of units
+        enable_dueling_network=True,                  # dueling network enable
+        dueling_network_type=DuelingNetwork.AVERAGE,  # algorithm used in dueling network 
+        lstm_type=LstmType.NONE,  # LSTM enabled flag
+        lstm_units_num=512,       # LSTM number of units
+        lstmful_input_length=80,  # lstm inputs
 
         # train関係
-        memory_warmup_size=50000, # 初期メモリー確保用step数(学習しない)
-        target_model_update_interval=500,  # target networkのupdate間隔
-        enable_double_dqn=True,   # DDQN有効フラグ
-        enable_rescaling=False,   # rescalingを有効にするか
-        rescaling_epsilon=0.001,  # rescalingの定数
-        priority_exponent=0.9,    # シーケンス長priorityを計算する際のη
-        burnin_length=4,          # burn-in期間
+        memory_warmup_size=50000, # number of steps for allocating intial memory (not learned)
+        target_model_update_interval=500,  # target network model update interval
+        enable_double_dqn=True,   # DDQN enable
+        enable_rescaling=False,   # rescaling enable
+        rescaling_epsilon=0.001,  # rescaling constant
+        priority_exponent=0.9,    # when calculating the sequence length priority
+        burnin_length=4,          # burn-in period
         reward_multisteps=3,      # multistep reward
 
         # demo memory
@@ -124,7 +123,6 @@ class Agent57():
         enable_add_episode_end_frame=True,
         test_policy=0,
 
-        # その他
         verbose=1,
     ):
 
@@ -226,8 +224,7 @@ class Agent57():
             callbacks=[],
         ):
         
-        # GPU確認
-        # 参考: https://qiita.com/studio_haneya/items/4dfaf2fb2ac44818e7e0
+        #GPU
         if len(tf.config.experimental.list_physical_devices('GPU')) > 0:
             self.enable_GPU = True
             print("GPU: enable")
@@ -253,18 +250,18 @@ class Agent57():
 
     def _train(self, actor_num, learner_allocate, verbose):
     
-        # 通信用変数
+        # variables for communication
         self.learner_end_signal = mp.Value(ctypes.c_bool, False)
         self.is_learner_end = mp.Value(ctypes.c_bool, False)
         self.train_count = mp.Value(ctypes.c_int, 0)
 
-        # 経験通信用
+        # for experience communication
         exp_q = mp.Queue()
         
         weights_qs = []
         self.is_actor_ends = []
         for _ in range(actor_num):
-            # model weights通信用
+            # model weights communication
             weights_q = mp.Queue()
             weights_qs.append(weights_q)
             self.is_actor_ends.append(mp.Value(ctypes.c_bool, False))
@@ -274,7 +271,7 @@ class Agent57():
         t0 = time.time()
         try:
 
-            # learner ps の実行
+            # learner ps run
             learner_args = (
                 self.kwargs,
                 exp_q,
@@ -290,7 +287,7 @@ class Agent57():
                 self.learner_ps = mp.Process(target=learner_run, args=learner_args)
             self.learner_ps.start()
 
-            # actor ps の実行
+            # actor ps run
             self.actors_ps = []
             for i in range(actor_num):
                 # args
@@ -312,15 +309,15 @@ class Agent57():
                 self.actors_ps.append(ps)
                 ps.start()
 
-            # 終了を待つ
+            # until the end
             while True:
                 time.sleep(1)  # polling time
 
-                # learner終了確認
+                # learner end confirmation
                 if self.is_learner_end.value:
                     break
 
-                # actor終了確認
+                # actor end confirmation
                 f = True
                 for is_actor_end in self.is_actor_ends:
                     if not is_actor_end.value:
@@ -338,10 +335,10 @@ class Agent57():
 
         callbacks.on_dis_train_end()
         
-        # learner に終了を投げる
+        # throw the end to the learner
         self.learner_end_signal.value = True
 
-        # learner が終了するまで待つ
+        # learner waits until end
         t0 = time.time()
         while not self.is_learner_end.value:
             if time.time() - t0 < 60*10:  # timeout
@@ -388,7 +385,7 @@ def learner_run(
         runner = LearnerRunner(kwargs, exp_q, weights_qs)
         callbacks.on_dis_learner_begin(runner)
 
-        # learner はひたすら学習する
+        # learner learns
         if verbose > 0:
             print("Learner Start!")
         t0 = time.time()
@@ -399,11 +396,11 @@ def learner_run(
             callbacks.on_dis_learner_train_end(runner)
             train_count.value = runner.learner.train_count
 
-            # 終了判定
+            # end
             if learner_end_signal.value:
                 break
 
-            # 終了判定
+            # end
             if nb_trains > 0:
                 if runner.learner.train_count > nb_trains:
                     break
@@ -503,7 +500,7 @@ class LearnerRunner():
     def train(self):
         _train_count = self.learner.train_count + 1
         
-        # 一定毎に Actor に weights を送る
+        # send weights to the actor at regular intervals
         if _train_count % self.sync_actor_model_interval == 0:
             d = {
                 "ext": self.learner.actval_ext_model.get_weights()
@@ -523,7 +520,7 @@ class LearnerRunner():
                 # 送る
                 q.put(d)
         
-        # experience があれば RemoteMemory に追加
+        # add to remotememory if we have experience
         for _ in range(self.exp_q.qsize()):
             exp = self.exp_q.get(timeout=1)
             self.learner.add_exp(exp)
@@ -707,7 +704,7 @@ class ActorRunner(rl.core.Agent):
         
 
     def reset_states(self):  # override
-        self.actor.training = self.training  # training はコンストラクタで初期化されない
+        self.actor.training = self.training  # training not initialized in constructor
         self.actor.episode_begin()
 
         self.local_step = 0
@@ -726,13 +723,13 @@ class ActorRunner(rl.core.Agent):
 
     def forward(self, observation):  # override
         
-        # フレームスキップ(action_interval毎に行動を選択する)
+        # frame skip, select an action for each action_interval
         action = self.repeated_action
         if self.recent_terminal or (self.local_step % self.step_interval == 0):
             self.actor.forward_train_before(observation)
 
             if self.recent_terminal and self.enable_add_episode_end_frame:
-                # 最終フレーム後に1フレーム追加
+                # add a single frame after the last frame
                 exp = self.actor.create_exp(True, update_terminal=False)
                 if exp is not None:
                     self.exp_q.put(exp)
@@ -765,7 +762,7 @@ class ActorRunner(rl.core.Agent):
         if not self.training:
             return []
 
-        # weightが届いていればmodelを更新
+        # weight model, update if received
         if not self.weights_q.empty():
             d = self.weights_q.get(timeout=1)
             self.actor.actval_ext_model.set_weights(d["ext"])
@@ -795,7 +792,7 @@ class ActorRunner(rl.core.Agent):
             # stop
             callbacks.append(ActorStop(self.is_learner_end))
 
-            # keras-rlでの学習
+            # keras-rl learning
             super().fit(env, nb_steps=nb_steps, callbacks=callbacks, **kwargs)
 
         except Exception:
