@@ -16,8 +16,6 @@ from .callbacks import LoggerType, TimeStop, TrainLogger, ModelIntervalCheckpoin
 from .callbacks import DisTrainLogger, DisSaveManager
 
 
-
-
 def run_gym_dqn(
         enable_train,
         env,
@@ -142,7 +140,7 @@ def run_gym_agent57(
         test_actor = None
     else:
         test_actor = kwargs["actors"][0]
-    log = DisTrainLogger(
+    log_distrain = DisTrainLogger(
         logger_type,
         interval=log_interval,
         savedir=base_dir,
@@ -150,6 +148,15 @@ def run_gym_agent57(
         test_env=test_env,
         test_episodes=test_episodes,
         test_save_max_reward_file=os.path.join(base_dir, 'max_{step:02d}_{reward}.h5')
+    )
+    log_train = TrainLogger(
+        logger_type,
+        interval=log_interval,
+        savefile=os.path.join(base_dir, "{}_log.json".format(env_name)),
+        test_agent=test_actor,
+        test_env=test_env,
+        test_episodes=test_episodes,
+        test_save_max_reward_file=weight_file+'_max_{step:02d}_{reward}.h5'
     )
 
     if enable_train:
@@ -164,10 +171,10 @@ def run_gym_agent57(
             verbose=0
         )
 
-        manager.train(nb_trains, nb_time, callbacks=[save_manager, log])
+        manager.train(nb_trains, nb_time, callbacks=[save_manager, log_train, log_distrain])
 
     # plt
-    log.drawGraph("train")
+    log_distrain.drawGraph("train")
 
     # 訓練結果を見る
     agent = manager.createTestAgent(kwargs["actors"][0], "tmp_{}/last/learner.dat".format(env_name))
