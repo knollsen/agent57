@@ -409,7 +409,18 @@ class TrainLogger(keras.callbacks.Callback):
                 logs.append(d)
 
         return logs
-
+    def on_dis_actor_begin(dummy):
+        pass
+    def on_dis_actor_end(dummy):
+        pass
+    def on_dis_train_begin(dummy):
+        pass
+    def on_dis_train_end(dummy):
+        pass
+    def on_dis_learner_begin(dummy):
+        pass
+    def on_dis_learner_end(dummy):
+        pass
 
     def drawGraph(self, base="time"):
         
