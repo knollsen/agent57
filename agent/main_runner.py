@@ -48,7 +48,7 @@ def run_gym_dqn(
     log = TrainLogger(
         logger_type,
         interval=log_interval,
-        savefile=os.path.join(base_dir, "{}_log.json".format(env_name)),
+        savefile=os.path.join(base_dir, "{}_dqn_log.json".format(env_name)),
         test_agent=test_agent,
         test_env=test_env,
         test_episodes=test_episodes,
@@ -152,7 +152,7 @@ def run_gym_agent57(
     log_train = TrainLogger(
         logger_type,
         interval=log_interval,
-        savefile=os.path.join(base_dir, "{}_log.json".format(env_name)),
+        savefile=os.path.join(base_dir, "{}_agent57_log.json".format(env_name)),
         test_agent=test_actor,
         test_env=test_env,
         test_episodes=test_episodes,
