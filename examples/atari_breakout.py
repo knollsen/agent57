@@ -19,7 +19,7 @@ from agent.processor import AtariBreakout
 
 
 seed_everything(42)
-ENV_NAME = "Breakout-v0"
+ENV_NAME = "Breakout-ram-v0"
 episode_save_dir = "tmp_{}.".format(ENV_NAME)
 
 
@@ -140,7 +140,7 @@ def run_dqn(enable_train):
         ENV_NAME,
         kwargs,
         nb_steps=nb_steps,
-        nb_time=60*60*5,   # 18h
+        nb_time=60*60*3,   # 18h
         logger_type=LoggerType.TIME,
         log_interval=60*5,  # 20m
         test_env=env,
@@ -203,7 +203,7 @@ def run_agent57(enable_train):
         ENV_NAME,
         kwargs,
         nb_trains=1_750_000,
-        nb_time=60*180,  # in seconds
+        nb_time=60*60*5,  # in seconds, 3h
         logger_type=LoggerType.TIME,
         log_interval=60*5,  # 20m
         test_env=create_env,
@@ -227,7 +227,7 @@ if __name__ == '__main__':
 
     # SingleActorレーニング
     if False:
-        run_dqn(enable_train=False)
+        run_dqn(enable_train=True)
         #run_dqn(enable_train=False)  # test only
 
     # 複数Actorレーニング
