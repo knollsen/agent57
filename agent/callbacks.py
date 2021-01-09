@@ -16,6 +16,8 @@ import glob
 from .model import LstmType
 from .agent57 import Agent57, DisCallback
 
+import gc
+
 
 class MovieLogger(rl.callbacks.Callback):
     def __init__(self, verbose=1):
@@ -322,6 +324,10 @@ class TrainLogger(keras.callbacks.Callback):
             "nb_steps": int(logs.get("nb_steps", 0)),
         }
 
+        print("GARBAGE COLLECTING!!!")
+        gc.collect()
+        print("DONE GARBAGE COLLECTING!!!")
+
         if self.test_agent is not None:
             with tempfile.TemporaryDirectory() as tmpdir:
                 name = os.path.join(tmpdir, "tmp")
@@ -360,6 +366,7 @@ class TrainLogger(keras.callbacks.Callback):
             print(s)
 
         self._init()
+
 
         # add file
         if self.savefile != "":
