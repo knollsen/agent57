@@ -142,7 +142,7 @@ def run_dqn(enable_train):
         nb_steps=nb_steps,
         nb_time=60*60*5,   # 18h
         logger_type=LoggerType.TIME,
-        log_interval=60*5,  # 20m
+        log_interval=60*1,  # 20m
         test_env=env,
         test_episodes=10,
         movie_save=False,
@@ -205,7 +205,7 @@ def run_agent57(enable_train):
         nb_trains=1_750_000,
         nb_time=60*140,  # in seconds
         logger_type=LoggerType.TIME,
-        log_interval=60*5,  # 20m
+        log_interval=60*1,  # 20m
         test_env=create_env,
         is_load_weights=False,
         movie_save=False,
@@ -226,12 +226,14 @@ if __name__ == '__main__':
         run_replay(episode_save_dir)
 
     # SingleActorレーニング
-    if False:
-        run_dqn(enable_train=False)
+    if os.getenv("DQN") == "1":
+        print("Running DQN")
+        run_dqn(enable_train=True)
         #run_dqn(enable_train=False)  # test only
 
     # 複数Actorレーニング
-    if True:
-        run_agent57(enable_train=False)
+    if os.getenv("AGENT57") == "1":
+        print("Running Agent57")
+        run_agent57(enable_train=True)
         #run_agent57(enable_train=False)  # test only
 
