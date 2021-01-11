@@ -33,13 +33,28 @@ echo
 
 echo "Installing docker on machine"
 TARGET="$SSH_USERNAME@$VM_IP"
-ssh "$TARGET" -- "sudo apt update && sudo apt install -y docker.io" || exit
+ssh "$TARGET" -- "sudo apt update && sudo apt install -y docker.io git" || exit
 
 echo "Downloading required docker image"
 ssh "$TARGET" -- sudo docker pull mkerschbaumer/openai-gym || exit
 
+if [ -z "$GIT_REPO" ]; then
+	GIT_REPO=https://github.com/knollsen/agent57.git
+fi
+echo "Using git repo '$GIT_REPO' (set GIT_REPO to override)"
+
+# Temporary directory for the cloned repository
+echo "Cloning repo containing the code"
+ssh "$TARGET" -- git clone "$GIT_REPO" repo || exit
+
+if [ -z "$GIT_BRANCH" ]; then
+	GIT_BRANCH=pong
+fi
+echo "Checking out git branch '$GIT_BRANCH' (set GIT_BRANCH to override)"
+ssh "$TARGET" -- "cd repo && git checkout -q $GIT_BRANCH && cd .." || exit
+
 echo "Training Agent57"
-ssh "$TARGET" -- 'sudo docker run --rm --workdir /code --env AGENT57=1 -v $PWD/tmp:/code/tmp_Pong-v4 mkerschbaumer/openai-gym python3 examples/atari_pong.py'
+ssh "$TARGET" -- 'sudo docker run --rm --workdir /code --env AGENT57=1 -v $PWD/tmp:/code/tmp_Pong-v4 -v $PWD/repo/agent:/code/agent -v $PWD/repo/examples:/code/examples mkerschbaumer/openai-gym python3 examples/atari_pong.py'
 
 RESULTS_DIR=results
 if [ ! -d "$RESULTS_DIR" ]; then
