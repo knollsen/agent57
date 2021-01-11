@@ -8,6 +8,5 @@ RUN apt update && \
 	pip3 install --use-feature=2020-resolver tensorflow keras keras-rl gym numpy \
 		matplotlib pillow pygame dill opencv-python gym[atari] && \
 	mkdir /code
-
-COPY agent /code/agent
-COPY examples /code/examples
+WORKDIR /code
+CMD [ "/bin/bash" ]
