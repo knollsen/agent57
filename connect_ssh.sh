@@ -69,7 +69,7 @@ echo "Training using algorithm $ALGORITHM"
 REMAINING_VOLUME_MOUNTS='-v $PWD/repo/agent:/code/agent -v $PWD/repo/examples:/code/examples'
 SSH_COMMAND="sudo docker run --rm --workdir /code $ALGORITHM_SPECIFIC $REMAINING_VOLUME_MOUNTS mkerschbaumer/openai-gym python3 examples/atari_pong.py"
 echo "Executed SSH command: '$SSH_COMMAND'"
-ssh "$TARGET" -- "$SSH_COMMAND" || exit
+ssh "$TARGET" -- "$SSH_COMMAND"
 
 RESULTS_DIR=results
 if [ ! -d "$RESULTS_DIR" ]; then
@@ -79,10 +79,10 @@ fi
 
 RESULT_ZIP_FILE="$ALGORITHM.zip"
 echo "Creating zip file '$RESULT_ZIP_FILE' on VM"
-ssh "$TARGET" -- "zip -r $RESULT_ZIP_FILE \$(find tmp -type f)" || exit
+ssh "$TARGET" -- "zip -r $RESULT_ZIP_FILE \$(find tmp -type f)"
 
 echo "Downloading results from VM"
-scp -r "$TARGET:$RESULT_ZIP_FILE" "$RESULTS_DIR" || exit
+scp -r "$TARGET:$RESULT_ZIP_FILE" "$RESULTS_DIR"
 
 echo "Performing automatic shutdown"
 ssh "$TARGET" -- "sudo halt -p"
