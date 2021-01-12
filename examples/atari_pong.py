@@ -125,7 +125,7 @@ def run_dqn(enable_train):
     print("action_space      : " + str(env.action_space))
     print("observation_space : " + str(env.observation_space))
     print("reward_range      : " + str(env.reward_range))
-    nb_steps = 1_750_000
+    nb_steps = 3_000_000
 
     kwargs = create_parameter(env, nb_steps)
     kwargs["action_policy"] = AnnealingEpsilonGreedy(
@@ -188,7 +188,7 @@ def run_agent57(enable_train):
     print("action_space      : " + str(env.action_space))
     print("observation_space : " + str(env.observation_space))
     print("reward_range      : " + str(env.reward_range))
-    nb_steps = 1_750_000
+    nb_steps = 3_000_000
 
     kwargs = create_parameter(env, nb_steps)
 
@@ -202,7 +202,7 @@ def run_agent57(enable_train):
         env,
         ENV_NAME,
         kwargs,
-        nb_trains=1_750_000,
+        nb_trains=3_000_000,
         nb_time=60*60*8,  # in seconds
         logger_type=LoggerType.TIME,
         log_interval=60*5,  # 20m
