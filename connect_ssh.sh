@@ -57,7 +57,7 @@ ssh "$TARGET" -- "cd repo && git checkout -q $GIT_BRANCH && cd .." || exit
 
 # Construct algorithm-specific parts of docker run command
 if [ "$ALGORITHM" == "agent57" ]; then
-	ALGORITHM_SPECIFIC='--env AGENT57=1 -v $PWD/tmp:/code/tmp_Pong-v4'
+	ALGORITHM_SPECIFIC='--env AGENT57=1 -v $PWD/tmp:/code/tmp_Pong-ram-v4/'
 elif [ "$ALGORITHM" == "dqn" ]; then
 	ALGORITHM_SPECIFIC='--env DQN=1 -v $PWD/tmp:/code/tmp'
 else
