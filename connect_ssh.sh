@@ -84,3 +84,5 @@ ssh "$TARGET" -- "zip -r $RESULT_ZIP_FILE \$(find tmp -type f -name '*.json')" |
 echo "Downloading results from VM"
 scp -r "$TARGET:$RESULT_ZIP_FILE" "$RESULTS_DIR" || exit
 
+echo "Performing automatic shutdown"
+ssh "$TARGET" -- "sudo halt -p"
