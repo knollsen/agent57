@@ -19,7 +19,7 @@ from agent.processor import AtariPong
 
 
 seed_everything(42)
-ENV_NAME = "Pong-v4"
+ENV_NAME = "Pong-ram-v4"
 episode_save_dir = "tmp_{}.".format(ENV_NAME)
 
 
@@ -140,9 +140,9 @@ def run_dqn(enable_train):
         ENV_NAME,
         kwargs,
         nb_steps=nb_steps,
-        nb_time=60*60*5,   # 18h
+        nb_time=60*60*8,   # 18h
         logger_type=LoggerType.TIME,
-        log_interval=60*1,  # 20m
+        log_interval=60*5,  # 20m
         test_env=env,
         test_episodes=10,
         movie_save=False,
@@ -203,9 +203,9 @@ def run_agent57(enable_train):
         ENV_NAME,
         kwargs,
         nb_trains=1_750_000,
-        nb_time=60*140,  # in seconds
+        nb_time=60*60*8,  # in seconds
         logger_type=LoggerType.TIME,
-        log_interval=60*1,  # 20m
+        log_interval=60*5,  # 20m
         test_env=create_env,
         is_load_weights=False,
         movie_save=False,
