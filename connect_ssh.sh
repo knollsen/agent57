@@ -79,7 +79,7 @@ fi
 
 RESULT_ZIP_FILE="$ALGORITHM.zip"
 echo "Creating zip file '$RESULT_ZIP_FILE' on VM"
-ssh "$TARGET" -- "zip -r $RESULT_ZIP_FILE \$(find tmp -type f -name '*.json')" || exit
+ssh "$TARGET" -- "zip -r $RESULT_ZIP_FILE \$(find tmp -type f)" || exit
 
 echo "Downloading results from VM"
 scp -r "$TARGET:$RESULT_ZIP_FILE" "$RESULTS_DIR" || exit
