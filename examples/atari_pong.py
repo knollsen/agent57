@@ -125,7 +125,7 @@ def run_dqn(enable_train):
     print("action_space      : " + str(env.action_space))
     print("observation_space : " + str(env.observation_space))
     print("reward_range      : " + str(env.reward_range))
-    nb_steps = 1_750_000
+    nb_steps = 3_000_000
 
     kwargs = create_parameter(env, nb_steps)
     kwargs["action_policy"] = AnnealingEpsilonGreedy(
@@ -140,7 +140,7 @@ def run_dqn(enable_train):
         ENV_NAME,
         kwargs,
         nb_steps=nb_steps,
-        nb_time=60*60*5,   # 18h
+        nb_time=60*60*8,   # 18h
         logger_type=LoggerType.TIME,
         log_interval=60*5,  # 20m
         test_env=env,
@@ -188,7 +188,7 @@ def run_agent57(enable_train):
     print("action_space      : " + str(env.action_space))
     print("observation_space : " + str(env.observation_space))
     print("reward_range      : " + str(env.reward_range))
-    nb_steps = 1_750_000
+    nb_steps = 3_000_000
 
     kwargs = create_parameter(env, nb_steps)
 
@@ -202,8 +202,8 @@ def run_agent57(enable_train):
         env,
         ENV_NAME,
         kwargs,
-        nb_trains=1_750_000,
-        nb_time=60*140,  # in seconds
+        nb_trains=3_000_000,
+        nb_time=60*60*9,  # in seconds
         logger_type=LoggerType.TIME,
         log_interval=60*5,  # 20m
         test_env=create_env,
@@ -226,12 +226,11 @@ if __name__ == '__main__':
         run_replay(episode_save_dir)
 
     # SingleActorレーニング
-    if False:
-        run_dqn(enable_train=False)
+    if True:
+        run_dqn(enable_train=True)
         #run_dqn(enable_train=False)  # test only
 
     # 複数Actorレーニング
-    if True:
-        run_agent57(enable_train=False)
+    if False:
+        run_agent57(enable_train=True)
         #run_agent57(enable_train=False)  # test only
-

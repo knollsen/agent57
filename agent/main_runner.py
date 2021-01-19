@@ -165,16 +165,16 @@ def run_gym_agent57(
             verbose=0
         )
 
-        manager.train(nb_trains, nb_time, callbacks=[log])#manager.train(nb_trains, nb_time, callbacks=[save_manager, log])
+        manager.train(nb_trains, nb_time, callbacks=[save_manager, log])
 
     # plt
-    #log.drawGraph("train")
+    log.drawGraph("train")
 
     # 訓練結果を見る
     agent = manager.createTestAgent(kwargs["actors"][0], "tmp_{}/last/learner.dat".format(env_name))
     if agent is None:
         return
-    agent.test(env, nb_episodes=5, visualize=False)
+    agent.test(env, nb_episodes=5, visualize=True)
 
     # 動画保存用
     if movie_save:

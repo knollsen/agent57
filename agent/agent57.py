@@ -70,7 +70,7 @@ class Agent57():
         lstm_units_num=512,       # LSTM number of units
         lstmful_input_length=80,  # lstm inputs
 
-        # train関係
+        # training parameters
         memory_warmup_size=50000, # number of steps for allocating intial memory (not learned)
         target_model_update_interval=500,  # target network model update interval
         enable_double_dqn=True,   # DDQN enable
@@ -271,7 +271,7 @@ class Agent57():
         t0 = time.time()
         try:
 
-            # learner ps run
+            # learner process run
             learner_args = (
                 self.kwargs,
                 exp_q,
@@ -287,7 +287,7 @@ class Agent57():
                 self.learner_ps = mp.Process(target=learner_run, args=learner_args)
             self.learner_ps.start()
 
-            # actor ps run
+            # actor process run
             self.actors_ps = []
             for i in range(actor_num):
                 # args
@@ -496,7 +496,7 @@ class LearnerRunner():
         if self.learner.demo_memory is not None:
             add_memory(kwargs["demo_episode_dir"], self.learner.demo_memory, self.model_builder, kwargs)
         
-
+    #start a learner PRESENTATION
     def train(self):
         _train_count = self.learner.train_count + 1
         
@@ -562,6 +562,7 @@ def actor_run_allocate(allocate, *args):
     with tf.device(allocate):
         actor_run(*args)
 
+#start an actor PRESENTATION
 def actor_run(
         actor_index,
         kwargs, 

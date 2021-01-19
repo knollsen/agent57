@@ -125,7 +125,7 @@ def run_dqn(enable_train):
     print("action_space      : " + str(env.action_space))
     print("observation_space : " + str(env.observation_space))
     print("reward_range      : " + str(env.reward_range))
-    nb_steps = 1_750_000
+    nb_steps = 3_000_000
 
     kwargs = create_parameter(env, nb_steps)
     kwargs["action_policy"] = AnnealingEpsilonGreedy(
@@ -140,7 +140,7 @@ def run_dqn(enable_train):
         ENV_NAME,
         kwargs,
         nb_steps=nb_steps,
-        nb_time=60*60*3,   # 18h
+        nb_time=60*60*8,   # 18h
         logger_type=LoggerType.TIME,
         log_interval=60*5,  # 20m
         test_env=env,
@@ -184,7 +184,7 @@ def create_env():
 def run_agent57(enable_train):
     env = gym.make(ENV_NAME)
 
-    # ゲーム情報
+    # print some info on the environment
     print("action_space      : " + str(env.action_space))
     print("observation_space : " + str(env.observation_space))
     print("reward_range      : " + str(env.reward_range))
@@ -195,43 +195,31 @@ def run_agent57(enable_train):
     kwargs["actors"] = [MyActor1]
     #kwargs["actors"] = [MyActor1, MyActor3]
     #kwargs["actors"] = [MyActor1, MyActor2, MyActor3, MyActor4]
-    kwargs["sync_actor_model_interval"] = 50  # learner から model を同期する間隔
+    kwargs["sync_actor_model_interval"] = 50  # interval to sync model with actors
 
     run_gym_agent57(
         enable_train,
         env,
         ENV_NAME,
         kwargs,
-        nb_trains=1_750_000,
-        nb_time=60*60*5,  # in seconds, 3h
+        nb_trains=3_000_000,
+        nb_time=60*60*10,  # in seconds, 3h
         logger_type=LoggerType.TIME,
         log_interval=60*5,  # 20m
         test_env=create_env,
         is_load_weights=False,
-        movie_save=False,
+        movie_save=True,
     )
     env.close()
 
 
 if __name__ == '__main__':
-    
-    # エピソードを作成、保存
-    if False:
-        env = gym.make(ENV_NAME)
-        kwargs = create_parameter(env, 0)
-        run_play(env, episode_save_dir, kwargs["processor"], zoom=3)
 
-    # エピソードを再生(確認用)
-    if False:
-        run_replay(episode_save_dir)
-
-    # SingleActorレーニング
+    # DQN
     if False:
         run_dqn(enable_train=True)
-        #run_dqn(enable_train=False)  # test only
 
-    # 複数Actorレーニング
+    # Single actor Agent57
     if True:
         run_agent57(enable_train=True)
-        #run_agent57(enable_train=False)  # test only
 

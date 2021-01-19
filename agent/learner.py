@@ -204,7 +204,7 @@ class Learner():
 
     def train(self):
 
-        # RemoteMemory が一定数貯まるまで学習しない。
+        # RemoteMemory needs to be filled to an extent until the leaner can start
         if len(self.memory) <= self.memory_warmup_size:
             return
         self.train_count += 1
@@ -238,7 +238,7 @@ class Learner():
         batch_demo = 0
         batch_episode = 0
         
-        # memory から優先順位にもとづき状態を取得
+        # get states from memory
         indexes = []
         batchs = []
         weights = []
@@ -262,7 +262,7 @@ class Learner():
             weights.extend(w)
             memory_types.extend([2 for _ in range(batch_episode)])
         
-        # 学習
+        # Learning, depending on LSTM
         if self.lstm_type != LstmType.STATEFUL:
             self.train_model(indexes, batchs, weights, memory_types)
         else:
@@ -274,7 +274,7 @@ class Learner():
             if self.enable_intrinsic_actval_model:
                 self.actval_int_model_target.set_weights(self.actval_int_model.get_weights())
 
-    # ノーマルの学習
+    # standard model training
     def train_model(self, indexes, batchs, weights, memory_types):
 
         state0_batch = []

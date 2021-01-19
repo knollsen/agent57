@@ -16,8 +16,6 @@ import glob
 from .model import LstmType
 from .agent57 import Agent57, DisCallback
 
-import gc
-
 
 class MovieLogger(rl.callbacks.Callback):
     def __init__(self, verbose=1):
@@ -60,7 +58,7 @@ class MovieLogger(rl.callbacks.Callback):
             if frame % 50 == 0:
                 print("{}f {:.2f}m".format(frame, (time.time()-self.t0)/60))
         
-        #plt.imshow(self.frames[frame + self.start_frame])
+        plt.imshow(self.frames[frame + self.start_frame])
         self.patch.set_data(self.frames[frame + self.start_frame])
 
 
@@ -173,8 +171,8 @@ class ConvLayerView(rl.callbacks.Callback):
         org_shape = (org_img.shape[1], org_img.shape[0])
         org_img *= 255
         org_img = cv2.cvtColor(np.uint8(org_img), cv2.COLOR_GRAY2BGR)  # (w,h) -> (w,h,3)
-        #cv2.imshow('image', org_img)
-        #cv2.waitKey(0)
+        cv2.imshow('image', org_img)
+        cv2.waitKey(0)
         imgs = [org_img]
         names = ["original"]
 
@@ -323,10 +321,6 @@ class TrainLogger(keras.callbacks.Callback):
             "count": self.count,
             "nb_steps": int(logs.get("nb_steps", 0)),
         }
-
-        print("GARBAGE COLLECTING!!!")
-        gc.collect()
-        print("DONE GARBAGE COLLECTING!!!")
 
         if self.test_agent is not None:
             with tempfile.TemporaryDirectory() as tmpdir:
